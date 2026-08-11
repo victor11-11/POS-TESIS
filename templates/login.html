@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión - POS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+    <div class="card shadow p-4" style="width: 380px;">
+        <h3 class="text-center mb-4">Acceso POS</h3>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} py-2" role="alert">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('main.login') }}">
+            <div class="mb-3">
+                <label class="form-label">Usuario</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Perfil</label>
+                <select name="profile" class="form-select" required>
+                    <option value="Cajero">Cajero</option>
+                    <option value="Supervisor">Supervisor</option>
+                    <option value="Administrador">Administrador</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-2">Ingresar</button>
+        </form>
+
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary w-100 btn-sm" data-bs-toggle="modal" data-bs-target="#modalRegistro">
+                Registrar nuevo cajero
+            </button>
+            <button type="button" class="btn btn-outline-danger w-100 btn-sm" data-bs-toggle="modal" data-bs-target="#modalRecuperar">
+                Recuperar contraseña
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRegistro" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ url_for('main.registrar_usuario') }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Registro Autorizado de Personal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label text-danger fw-bold">Clave de Administrador</label>
+                            <input type="password" name="admin_secret" class="form-control" placeholder="Ingrese clave maestra" required>
+                        </div>
+                        <hr>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre Completo</label>
+                            <input type="text" name="nombre_completo" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de Usuario</label>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña del Cajero</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cargo</label>
+                            <select name="cargo" class="form-select" required>
+                                <option value="Cajero">Cajero</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success btn-sm">Guardar Cajero</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalRecuperar" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ url_for('main.recover_password') }}">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Recuperar Contraseña</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Usuario</label>
+                            <input type="text" name="recover_username" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Perfil</label>
+                            <select name="recover_profile" id="recover_profile" class="form-select" required>
+                                <option value="Cajero">Cajero</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="admin_key_group" style="display:none;">
+                            <label class="form-label text-danger">Clave Administrador</label>
+                            <input type="password" name="admin_key" class="form-control" placeholder="Clave de administrador">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nueva Contraseña</label>
+                            <input type="password" name="new_password" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary btn-sm">Restablecer Contraseña</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var recoverProfile = document.getElementById('recover_profile');
+            var adminGroup = document.getElementById('admin_key_group');
+            if (recoverProfile) {
+                function toggleAdmin() {
+                    if (recoverProfile.value === 'Administrador') {
+                        adminGroup.style.display = '';
+                    } else {
+                        adminGroup.style.display = 'none';
+                    }
+                }
+                recoverProfile.addEventListener('change', toggleAdmin);
+                toggleAdmin();
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

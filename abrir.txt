@@ -1,0 +1,29 @@
+====================================================
+PASOS PARA EJECUTAR EL SISTEMA POS EN LA LAPTOP
+====================================================
+
+1. DESCOMPRIMIR Y ABRIR EN VS CODE:
+   - Descomprime esta carpeta en tu laptop (por ejemplo, en el Escritorio).
+   - Abre Visual Studio Code y selecciona "File > Open Folder..." para abrir la carpeta del proyecto.
+
+2. ABRIR LA TERMINAL DE VS CODE:
+   - Ve al menú superior y selecciona "Terminal > New Terminal".
+
+3. CREAR EL ENTORNO VIRTUAL (Recomendado para Windows):
+   Ejecuta el siguiente comando en la terminal:
+   python -m venv venv
+
+4. ACTIVAR EL ENTORNO VIRTUAL:
+   Ejecuta este comando (asegúrate de que aparezca "(venv)" al principio de la línea en la terminal):
+   venv\Scripts\activate
+
+5. INSTALAR LAS DEPENDENCIAS AUTOMÁTICAMENTE:
+   Ejecuta el siguiente comando para instalar todo lo necesario desde el archivo requirements.txt:
+   pip install -r requirements.txt
+
+6. EJECUTAR LA APLICACIÓN:
+   Arranca el servidor de Flask con:
+   python app.py
+
+7. LISTO:
+   Haz clic en el enlace web que aparece en la terminal (ej: http://127.0.0.1:5000) o ábrelo en tu navegador favorito.
