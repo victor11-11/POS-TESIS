@@ -32,7 +32,8 @@ def login():
 
         flash('Usuario o contraseña incorrectos', 'danger')
 
-    return render_template('login.html')
+    users = User.query.order_by(User.nombre_completo).all()
+    return render_template('login.html', users=users)
 
 
 @bp.route('/recover', methods=['POST'])

@@ -20,7 +20,11 @@
         <form method="POST" action="{{ url_for('main.login') }}">
             <div class="mb-3">
                 <label class="form-label">Usuario</label>
-                <input type="text" name="username" class="form-control" required>
+                <select name="username" class="form-select" required>
+                    {% for u in users %}
+                        <option value="{{ u.username }}">{{ u.nombre_completo }} ({{ u.username }}) - {{ u.cargo }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="mb-3">
                 <label class="form-label">Perfil</label>
