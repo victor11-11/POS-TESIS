@@ -15,12 +15,45 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%),
+                        url('https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-blend-mode: overlay;
+            background-size: cover;
             margin: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+        }
+
+        /* Glass card styles shared with login */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+        }
+
+        .btn-pos-primary {
+            background-color: #334155;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 8px 12px;
+            transition: 0.2s;
+        }
+
+        .btn-pos-primary:hover { background-color: #475569; }
+
+        .btn-outline-light-custom {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #e6eef6;
+            border-radius: 6px;
         }
 
         /* BARRA SUPERIOR LIMPIA Y COMPACTA */
@@ -561,7 +594,7 @@
     </header>
 
     <div class="main-container">
-        <div class="products-section">
+        <div class="products-section glass-card p-3">
             <div class="top-bar">
                 <form method="GET" action="/" class="toolbar-form">
                     <input type="text" name="q" class="search-input" placeholder="Buscar medicamento, snack..." value="{{ search_query }}">
@@ -612,7 +645,7 @@
             </div>
         </div>
 
-        <div class="cart-panel">
+        <div class="cart-panel glass-card p-3">
             <h2>
                 Ticket de Caja
                 {% if client %}<span class="client-badge">{{ client.name }}</span>{% endif %}
