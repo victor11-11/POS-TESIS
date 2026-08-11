@@ -2,122 +2,309 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión - POS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - POS Insuamed</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light d-flex align-items-center justify-content-center vh-100">
-    <div class="card shadow p-4" style="width: 380px;">
-        <h3 class="text-center mb-4">Acceso POS</h3>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Fondo principal */
+        body {
+            background: url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} py-2" role="alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        /* Estilo Cristal (Glassmorphism) para la tarjeta de Login */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            color: #fff;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
 
-        <form method="POST" action="{{ url_for('main.login') }}">
-            <div class="mb-3">
-                <label class="form-label">Usuario</label>
-                <select name="username" class="form-select" required>
-                    {% for u in users %}
-                        <option value="{{ u.username }}">{{ u.nombre_completo }} ({{ u.username }}) - {{ u.cargo }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Perfil</label>
-                <select name="profile" class="form-select" required>
-                    <option value="Cajero">Cajero</option>
-                    <option value="Supervisor">Supervisor</option>
-                    <option value="Administrador">Administrador</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Contraseña</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-2">Ingresar</button>
-        </form>
+        /* Ajustando los inputs de Bootstrap al estilo cristal */
+        .glass-card .form-control,
+        .glass-card .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            border-radius: 10px;
+            padding: 10px 15px;
+        }
 
-        <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-secondary w-100 btn-sm" data-bs-toggle="modal" data-bs-target="#modalRegistro">
-                Registrar nuevo cajero
-            </button>
-            <button type="button" class="btn btn-outline-danger w-100 btn-sm" data-bs-toggle="modal" data-bs-target="#modalRecuperar">
-                Recuperar contraseña
-            </button>
-        </div>
-    </div>
+        .glass-card .form-control:focus,
+        .glass-card .form-select:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #fff;
+            color: #fff;
+            box-shadow: none;
+        }
 
-    <div class="modal fade" id="modalRegistro" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="POST" action="{{ url_for('main.registrar_usuario') }}">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Registro Autorizado de Personal</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        /* Fondo oscuro para las opciones del select y que se puedan leer */
+        .glass-card .form-select option {
+            background: #1e293b;
+            color: #fff;
+        }
+
+        .glass-card .form-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        /* Botón principal */
+        .btn-glass {
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Acceso POS - Sistema Tecnosoft</title>
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <style>
+                    body {
+                        /* Fondo corporativo difuminado que combina con el panel POS */
+                        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%), 
+                                    url('https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+                        background-blend-mode: overlay;
+                        background-size: cover;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        height: 100vh;
+                    }
+
+                    /* Tarjeta con efecto cristal adaptada al backend */
+                    .glass-card {
+                        background: rgba(30, 41, 59, 0.75);
+                        backdrop-filter: blur(14px);
+                        -webkit-backdrop-filter: blur(14px);
+                        border: 1px solid rgba(255, 255, 255, 0.15);
+                        border-radius: 16px;
+                        color: #fff;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+                    }
+
+                    .glass-card .form-control,
+                    .glass-card .form-select {
+                        background: rgba(15, 23, 42, 0.6);
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                        color: #fff;
+                        border-radius: 8px;
+                        padding: 10px 14px;
+                    }
+
+                    .glass-card .form-control:focus,
+                    .glass-card .form-select:focus {
+                        background: rgba(15, 23, 42, 0.8);
+                        border-color: #38bdf8;
+                        color: #fff;
+                        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+                    }
+
+                    .glass-card .form-select option {
+                        background: #1e293b;
+                        color: #fff;
+                    }
+
+                    .glass-card .form-label {
+                        color: #cbd5e1;
+                        font-weight: 500;
+                        font-size: 0.85rem;
+                    }
+
+                    /* Botón de acceso con el estilo de cabecera del POS */
+                    .btn-pos-primary {
+                        background-color: #334155;
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                        color: #fff;
+                        font-weight: 600;
+                        border-radius: 8px;
+                        padding: 11px;
+                        transition: 0.2s;
+                    }
+
+                    .btn-pos-primary:hover {
+                        background-color: #475569;
+                        color: #fff;
+                        border-color: rgba(255, 255, 255, 0.4);
+                    }
+
+                    .btn-outline-light-custom {
+                        background: transparent;
+                        border: 1px solid rgba(255, 255, 255, 0.25);
+                        color: #cbd5e1;
+                        border-radius: 6px;
+                        font-size: 0.8rem;
+                        transition: 0.2s;
+                    }
+
+                    .btn-outline-light-custom:hover {
+                        background: rgba(255, 255, 255, 0.1);
+                        color: #fff;
+                    }
+                </style>
+            </head>
+            <body class="d-flex align-items-center justify-content-center">
+    
+                <div class="glass-card p-4" style="width: 100%; max-width: 420px;">
+                    <div class="text-center mb-4">
+                        <span class="badge bg-secondary mb-2 px-3 py-1 text-uppercase tracking-wider" style="font-size: 0.7rem;">Módulo POS</span>
+                        <h3 class="fw-bold mb-0 text-white">Sistema POS - Tecnosoft</h3>
                     </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label text-danger fw-bold">Clave de Administrador</label>
-                            <input type="password" name="admin_secret" class="form-control" placeholder="Ingrese clave maestra" required>
-                        </div>
-                        <hr>
-                        <div class="mb-3">
-                            <label class="form-label">Nombre Completo</label>
-                            <input type="text" name="nombre_completo" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nombre de Usuario</label>
-                            <input type="text" name="username" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña del Cajero</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Cargo</label>
-                            <select name="cargo" class="form-select" required>
-                                <option value="Cajero">Cajero</option>
-                                <option value="Supervisor">Supervisor</option>
-                                <option value="Administrador">Administrador</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success btn-sm">Guardar Cajero</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
-    <div class="modal fade" id="modalRecuperar" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form method="POST" action="{{ url_for('main.recover_password') }}">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Recuperar Contraseña</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} py-2 text-center small" role="alert">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="{{ url_for('main.login') }}">
                         <div class="mb-3">
                             <label class="form-label">Usuario</label>
-                            <input type="text" name="recover_username" class="form-control" required>
+                            <select name="username" class="form-select" required>
+                                {% for u in users %}
+                                    <option value="{{ u.username }}">{{ u.nombre_completo }} ({{ u.username }}) - {{ u.cargo }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
+            
                         <div class="mb-3">
                             <label class="form-label">Perfil</label>
-                            <select name="recover_profile" id="recover_profile" class="form-select" required>
+                            <select name="profile" class="form-select" required>
                                 <option value="Cajero">Cajero</option>
                                 <option value="Supervisor">Supervisor</option>
                                 <option value="Administrador">Administrador</option>
                             </select>
                         </div>
-                        <div class="mb-3" id="admin_key_group" style="display:none;">
-                            <label class="form-label text-danger">Clave Administrador</label>
+            
+                        <div class="mb-4">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+            
+                        <button type="submit" class="btn btn-pos-primary w-100 mb-3 shadow-sm">Ingresar al Sistema</button>
+                    </form>
+
+                    <div class="d-flex gap-2 pt-2 border-top border-secondary">
+                        <button type="button" class="btn btn-outline-light-custom w-100 py-2" data-bs-toggle="modal" data-bs-target="#modalRegistro">
+                            Registrar cajero
+                        </button>
+                        <button type="button" class="btn btn-outline-light-custom w-100 py-2 text-danger border-danger border-opacity-50" data-bs-toggle="modal" data-bs-target="#modalRecuperar">
+                            Recuperar clave
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modales de Registro y Recuperación (Se mantienen limpios e intactos) -->
+                <div class="modal fade" id="modalRegistro" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ url_for('main.registrar_usuario') }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Registro Autorizado de Personal</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label text-danger fw-bold">Clave de Administrador</label>
+                                        <input type="password" name="admin_secret" class="form-control" placeholder="Ingrese clave maestra" required>
+                                    </div>
+                                    <hr>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre Completo</label>
+                                        <input type="text" name="nombre_completo" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nombre de Usuario</label>
+                                        <input type="text" name="username" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Contraseña del Cajero</label>
+                                        <input type="password" name="password" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Cargo</label>
+                                        <select name="cargo" class="form-select" required>
+                                            <option value="Cajero">Cajero</option>
+                                            <option value="Supervisor">Supervisor</option>
+                                            <option value="Administrador">Administrador</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-success btn-sm">Guardar Cajero</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="modalRecuperar" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="POST" action="{{ url_for('main.recover_password') }}">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Recuperar Contraseña</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Usuario</label>
+                                        <input type="text" name="recover_username" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Perfil</label>
+                                        <select name="recover_profile" id="recover_profile" class="form-select" required>
+                                            <option value="Cajero">Cajero</option>
+                                            <option value="Supervisor">Supervisor</option>
+                                            <option value="Administrador">Administrador</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3" id="admin_key_group" style="display:none;">
+                                        <label class="form-label text-danger">Clave Administrador</label>
+                                        <input type="password" name="admin_key" class="form-control" placeholder="Clave de administrador">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nueva Contraseña</label>
+                                        <input type="password" name="new_password" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary btn-sm">Restablecer Contraseña</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var recoverProfile = document.getElementById('recover_profile');
+                        var adminGroup = document.getElementById('admin_key_group');
+                        if (recoverProfile) {
+                            function toggleAdmin() {
+                                if (recoverProfile.value === 'Administrador') {
+                                    adminGroup.style.display = '';
+                                } else {
+                                    adminGroup.style.display = 'none';
+                                }
+                            }
+                            recoverProfile.addEventListener('change', toggleAdmin);
+                            toggleAdmin();
+                        }
+                    });
+                </script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            </body>
+            </html>
                             <input type="password" name="admin_key" class="form-control" placeholder="Clave de administrador">
                         </div>
                         <div class="mb-3">
@@ -134,6 +321,7 @@
         </div>
     </div>
 
+    <!-- SCRIPT ORIGINAL INTACTO -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var recoverProfile = document.getElementById('recover_profile');
