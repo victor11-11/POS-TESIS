@@ -37,6 +37,18 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.35);
         }
 
+            /* Forzar texto oscuro en ticket y nombres de productos agregados */
+            /* Para asegurar legibilidad cuando el fondo es oscuro */
+            #ticket-caja, .ticket-container, .card-body {
+                color: #1e293b !important;
+            }
+
+            /* Asegurar que los nombres de los productos agregados no sean blancos */
+            .order-line, .ticket-item, .product-name-in-cart {
+                color: #1e293b !important;
+                font-weight: 500;
+            }
+
         .btn-pos-primary {
             background-color: #334155;
             border: 1px solid rgba(255, 255, 255, 0.12);
