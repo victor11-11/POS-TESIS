@@ -303,6 +303,30 @@ def select_client(client_id):
         show_client_actions_modal = False
     return redirect(url_for('main.index'))
 
+
+@bp.route('/delete-client/<int:client_id>', methods=['POST'])
+def delete_client(client_id):
+    """Eliminar un cliente registrado. Antes de borrar, desvincula ventas asociadas (client_id -> NULL)."""
+    global current_client_id
+    client = Client.query.get(client_id)
+    if not client:
+        flash('Cliente no encontrado.', 'warning')
+        return redirect(url_for('main.index'))
+
+    # Desvincular ventas asociadas
+    sales = Sale.query.filter_by(client_id=client.id).all()
+    for s in sales:
+        s.client_id = None
+
+    # Si el cliente está seleccionado actualmente, limpiarlo
+    if current_client_id == client.id:
+        current_client_id = None
+
+    db.session.delete(client)
+    db.session.commit()
+    flash('Cliente eliminado correctamente.', 'success')
+    return redirect(url_for('main.index'))
+
 @bp.route('/show-register-form')
 def show_register_form():
     global show_register_modal, show_form_register

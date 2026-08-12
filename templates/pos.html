@@ -786,8 +786,11 @@
                             <b>{{ c.name }}</b><br>
                             <small>{{ c.cedula }} • Tipo: {{ c.tipo }}</small>
                         </div>
-                        <div>
+                        <div style="display:flex; gap:6px;">
                             <a href="/select-client/{{ c.id }}" class="btn-action btn-action--small">Seleccionar</a>
+                            <form method="POST" action="/delete-client/{{ c.id }}" onsubmit="return confirm('Eliminar cliente {{ c.name }} ({{ c.cedula }})? Esta acción es irreversible.');" style="display:inline; margin:0;">
+                                <button type="submit" class="btn-action btn-clear btn-action--small">Eliminar</button>
+                            </form>
                         </div>
                     </div>
                     {% endfor %}
