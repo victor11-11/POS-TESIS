@@ -759,7 +759,13 @@
     <div class="modal{{ ' is-visible' if show_client_modal else '' }}" id="modal-client">
         <div class="modal-content">
             <h3>Identificación de Cliente</h3>
-            <form method="POST" action="/check-client">
+            <div style="display:flex; gap:8px; margin-bottom:10px; align-items:center;">
+                <a href="/ask-client?tipo=all" class="btn-action btn-action--small" style="background:#6b7280;">Todos</a>
+                <a href="/ask-client?tipo=V" class="btn-action btn-action--small" style="background:#1f2937;">Persona Natural (V)</a>
+                <a href="/ask-client?tipo=J" class="btn-action btn-action--small" style="background:#0f172a;">Persona Jurídica (J)</a>
+            </div>
+
+            <form method="POST" action="/check-client" style="margin-bottom:12px;">
                 <div class="form-group">
                     <label>Ingrese Número de Cédula:</label>
                     <input type="text" name="cedula" required placeholder="Ej: V-12345678" autofocus>
@@ -769,6 +775,22 @@
                     <a href="/cancel-client" class="btn-action btn-clear">Cancelar</a>
                 </div>
             </form>
+
+            {% if clients %}
+            <div style="max-height:240px; overflow-y:auto; margin-top:8px;">
+                {% for c in clients %}
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
+                    <div>
+                        <b>{{ c.name }}</b><br>
+                        <small>{{ c.cedula }} • Tipo: {{ c.tipo }}</small>
+                    </div>
+                    <div>
+                        <a href="/select-client/{{ c.id }}" class="btn-action btn-action--small">Seleccionar</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
         </div>
     </div>
 

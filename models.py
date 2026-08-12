@@ -20,6 +20,23 @@ class Client(db.Model):
     address = db.Column(db.String(200), nullable=False)
     sales = db.relationship('Sale', backref='client', lazy=True)
 
+    @property
+    def tipo(self):
+        """Determina el tipo de persona según el prefijo de la cédula/RIF.
+        Retorna 'J' para persona jurídica (RIF que inicia con 'J'),
+        'V' para persona natural (cedula que inicia con 'V'), o 'O' para otro."""
+        if not self.cedula:
+            return 'O'
+        c = self.cedula.strip().upper()
+        if len(c) == 0:
+            return 'O'
+        first = c[0]
+        if first == 'J':
+            return 'J'
+        if first == 'V':
+            return 'V'
+        return 'O'
+
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)

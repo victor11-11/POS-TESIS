@@ -9,6 +9,7 @@ cart = []
 current_client_id = None
 TASA_BCV = 36.50  # Modifica esta tasa cuando lo necesites
 CLAVE_MAESTRA_ADMIN = 'admin1234'
+client_filter_tipo = None
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -121,6 +122,11 @@ def _render_pos_page(search_query='', active_cat='all', edit_product=None):
         filtered_products = filtered_products.filter(Product.name.ilike(f'%{search_query}%'))
 
     products = filtered_products.all()
+    # Lista de clientes para el modal de selección, filtrada por tipo si está definido
+    clients_query = Client.query.order_by(Client.name)
+    if client_filter_tipo and client_filter_tipo in ['V', 'J']:
+        clients_query = clients_query.filter(Client.cedula.ilike(f'{client_filter_tipo}%'))
+    clients = clients_query.all()
     total = sum(item['price'] * item['qty'] for item in cart)
     client_obj = Client.query.get(current_client_id) if current_client_id else None
 
@@ -132,6 +138,7 @@ def _render_pos_page(search_query='', active_cat='all', edit_product=None):
     return render_template(
         'pos.html',
         products=products,
+        clients=clients,
         cart=cart,
         total=total,
         client=client_obj,
@@ -228,6 +235,16 @@ def close_client_actions():
 @bp.route('/ask-client')
 def ask_client():
     global show_client_modal, show_register_modal, show_form_register, show_invoice, show_client_actions_modal
+    # Opcional: recibir filtro por tipo de persona (?tipo=V o ?tipo=J)
+    global client_filter_tipo
+    requested_tipo = request.args.get('tipo')
+    if requested_tipo:
+        requested_tipo = requested_tipo.strip().upper()
+        if requested_tipo in ['V', 'J']:
+            client_filter_tipo = requested_tipo
+        else:
+            client_filter_tipo = None
+
     show_client_actions_modal = False
     show_client_modal = True
     show_register_modal = False
@@ -250,6 +267,17 @@ def check_client():
         show_register_modal = True
         return redirect(url_for('main.index'))
 
+
+@bp.route('/select-client/<int:client_id>')
+def select_client(client_id):
+    global current_client_id, show_client_modal, show_client_actions_modal
+    client = Client.query.get(client_id)
+    if client:
+        current_client_id = client.id
+        show_client_modal = False
+        show_client_actions_modal = False
+    return redirect(url_for('main.index'))
+
 @bp.route('/show-register-form')
 def show_register_form():
     global show_register_modal, show_form_register
@@ -263,12 +291,19 @@ def save_client():
     cedula = request.form.get('cedula')
     name = request.form.get('name')
     address = request.form.get('address')
-    
-    new_client = Client(cedula=cedula, name=name, address=address)
-    db.session.add(new_client)
-    db.session.commit()
-    
-    current_client_id = new_client.id
+    # Normalizar cédula
+    cedula_norm = cedula.strip().upper() if cedula else ''
+    # Validar existencia para evitar duplicados
+    existing = Client.query.filter_by(cedula=cedula_norm).first()
+    if existing:
+        # Si ya existe, usarlo como cliente actual y notificar
+        current_client_id = existing.id
+        flash('Ya existe un cliente con esa cédula. Se seleccionó el cliente existente.', 'warning')
+    else:
+        new_client = Client(cedula=cedula_norm, name=name, address=address)
+        db.session.add(new_client)
+        db.session.commit()
+        current_client_id = new_client.id
     show_form_register = False
     return redirect(url_for('main.index'))
 
