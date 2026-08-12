@@ -1,4 +1,5 @@
 import os
+import re
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -9,6 +10,22 @@ cart = []
 current_client_id = None
 TASA_BCV = 36.50  # Modifica esta tasa cuando lo necesites
 CLAVE_MAESTRA_ADMIN = 'admin1234'
+client_filter_tipo = None
+
+
+def normalize_cedula(cedula):
+    if not cedula:
+        return ''
+    return cedula.strip().upper().replace(' ', '')
+
+
+def is_valid_cedula(cedula):
+    """Validar formato básico de cédula/RIF: acepta V-12345678, V12345678, J-12345678-9, etc."""
+    if not cedula:
+        return False
+    c = normalize_cedula(cedula)
+    # Permitir: inicio con V o J, opcionalmente un guion, luego dígitos, opcional - dígitos
+    return re.match(r'^[VJ]\-?\d+(\-\d+)?$', c) is not None
 client_filter_tipo = None
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -255,9 +272,17 @@ def ask_client():
 @bp.route('/check-client', methods=['POST'])
 def check_client():
     global current_client_id, show_client_modal, show_register_modal, temp_cedula
-    cedula = request.form.get('cedula').strip()
+    cedula_raw = request.form.get('cedula', '').strip()
+
+    # Validar formato
+    if not is_valid_cedula(cedula_raw):
+        flash('Formato de cédula/RIF inválido. Use V-12345678 o J-12345678-9', 'warning')
+        # Reabrir modal de identificación
+        return redirect(url_for('main.ask_client'))
+
+    cedula = normalize_cedula(cedula_raw)
     client = Client.query.filter_by(cedula=cedula).first()
-    
+
     show_client_modal = False
     if client:
         current_client_id = client.id
@@ -291,8 +316,16 @@ def save_client():
     cedula = request.form.get('cedula')
     name = request.form.get('name')
     address = request.form.get('address')
+
+    # Validar formato
+    if not is_valid_cedula(cedula):
+        flash('Formato de cédula/RIF inválido. Use V-12345678 o J-12345678-9', 'warning')
+        temp_cedula = cedula
+        show_form_register = True
+        return redirect(url_for('main.index'))
+
     # Normalizar cédula
-    cedula_norm = cedula.strip().upper() if cedula else ''
+    cedula_norm = normalize_cedula(cedula)
     # Validar existencia para evitar duplicados
     existing = Client.query.filter_by(cedula=cedula_norm).first()
     if existing:
@@ -304,6 +337,7 @@ def save_client():
         db.session.add(new_client)
         db.session.commit()
         current_client_id = new_client.id
+
     show_form_register = False
     return redirect(url_for('main.index'))
 

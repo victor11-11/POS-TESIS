@@ -777,18 +777,21 @@
             </form>
 
             {% if clients %}
-            <div style="max-height:240px; overflow-y:auto; margin-top:8px;">
-                {% for c in clients %}
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
-                    <div>
-                        <b>{{ c.name }}</b><br>
-                        <small>{{ c.cedula }} • Tipo: {{ c.tipo }}</small>
+            <div style="margin-top:8px;">
+                <input id="client-search" type="text" placeholder="Buscar por nombre o cédula..." style="width:100%; padding:8px; margin-bottom:8px;">
+                <div id="clients-list" style="max-height:240px; overflow-y:auto;">
+                    {% for c in clients %}
+                    <div class="client-row" data-name="{{ c.name|lower }}" data-cedula="{{ c.cedula|lower }}" style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
+                        <div>
+                            <b>{{ c.name }}</b><br>
+                            <small>{{ c.cedula }} • Tipo: {{ c.tipo }}</small>
+                        </div>
+                        <div>
+                            <a href="/select-client/{{ c.id }}" class="btn-action btn-action--small">Seleccionar</a>
+                        </div>
                     </div>
-                    <div>
-                        <a href="/select-client/{{ c.id }}" class="btn-action btn-action--small">Seleccionar</a>
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
             {% endif %}
         </div>
@@ -891,6 +894,27 @@
         }, 3000);
     </script>
     {% endif %}
+
+    <script>
+        // Buscar clientes en la modal por nombre o cédula
+        document.addEventListener('DOMContentLoaded', function() {
+            var input = document.getElementById('client-search');
+            if (!input) return;
+            input.addEventListener('input', function() {
+                var q = input.value.trim().toLowerCase();
+                var rows = document.querySelectorAll('#clients-list .client-row');
+                rows.forEach(function(r) {
+                    var name = r.getAttribute('data-name') || '';
+                    var ced = r.getAttribute('data-cedula') || '';
+                    if (q === '' || name.indexOf(q) !== -1 || ced.indexOf(q) !== -1) {
+                        r.style.display = 'flex';
+                    } else {
+                        r.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 
     <div class="modal" id="modal-payment-simulator">
         <div class="modal-content">
