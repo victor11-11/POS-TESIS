@@ -24,8 +24,9 @@ def is_valid_cedula(cedula):
     if not cedula:
         return False
     c = normalize_cedula(cedula)
-    # Permitir: inicio con V o J, opcionalmente un guion, luego dígitos, opcional - dígitos
-    return re.match(r'^[VJ]\-?\d+(\-\d+)?$', c) is not None
+    # Permitir formatos flexibles: opcional letra inicial (V,J,E,G,P...), opcional guion, dígitos, opcional -digitos
+    # También acepta solo dígitos.
+    return re.match(r'^[A-Z]?-?\d+(-\d+)?$', c) is not None
 client_filter_tipo = None
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -289,6 +290,7 @@ def check_client():
         return redirect(url_for('main.index'))
     else:
         temp_cedula = cedula
+        flash('Cliente no registrado. Proceda a registrarlo en el formulario.', 'info')
         show_register_modal = True
         return redirect(url_for('main.index'))
 
